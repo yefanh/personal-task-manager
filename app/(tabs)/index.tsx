@@ -77,6 +77,18 @@ export default function TaskListScreen() {
     ]);
   };
 
+  const handleToggleStatusPress = (task: Task) => {
+    const nextStatus: Task['status'] = task.status === 'completed' ? 'pending' : 'completed';
+
+    setTasks((prevTasks) =>
+      prevTasks.map((t) => (t.id === task.id ? { ...t, status: nextStatus } : t))
+    );
+
+    if (editingTask?.id === task.id) {
+      setEditingTask({ ...editingTask, status: nextStatus });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <AddTaskForm
@@ -87,7 +99,12 @@ export default function TaskListScreen() {
         onSubmit={handleSubmitNewTask}
       />
 
-      <TaskList tasks={tasks} onEditPress={handleEditPress} onDeletePress={handleDeletePress} />
+      <TaskList
+        tasks={tasks}
+        onEditPress={handleEditPress}
+        onDeletePress={handleDeletePress}
+        onToggleStatusPress={handleToggleStatusPress}
+      />
 
       {editingTask && (
         <EditTaskForm

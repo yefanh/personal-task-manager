@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Button, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import type { Task } from '@/src/types/task';
 
@@ -7,9 +7,10 @@ interface TaskCardProps {
   task: Task;
   onEditPress?: (task: Task) => void;
   onDeletePress?: (task: Task) => void;
+  onToggleStatusPress?: (task: Task) => void;
 }
 
-export function TaskCard({ task, onEditPress, onDeletePress }: TaskCardProps) {
+export function TaskCard({ task, onEditPress, onDeletePress, onToggleStatusPress }: TaskCardProps) {
   const isCompleted = task.status === 'completed';
   const statusStyle = isCompleted ? styles.statusCompleted : styles.statusPending;
 
@@ -17,9 +18,13 @@ export function TaskCard({ task, onEditPress, onDeletePress }: TaskCardProps) {
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.title}>{task.title}</Text>
-        <View style={[styles.statusBadge, statusStyle]}>
+        <Pressable
+          disabled={!onToggleStatusPress}
+          onPress={() => onToggleStatusPress?.(task)}
+          style={[styles.statusBadge, statusStyle]}
+        >
           <Text style={styles.statusText}>{task.status}</Text>
-        </View>
+        </Pressable>
       </View>
       <Text style={styles.description} numberOfLines={1}>
         {task.description}

@@ -9,12 +9,13 @@ interface TaskListProps {
   tasks: Task[];
   onEditPress?: (task: Task) => void;
   onDeletePress?: (task: Task) => void;
+  onToggleStatusPress?: (task: Task) => void;
 }
 
 // TaskList is a presentational component responsible only for rendering the task list.
 // It receives tasks as props and does not manage any state.
 // This separation of concerns makes the component reusable and easier to test.
-export function TaskList({ tasks, onEditPress, onDeletePress }: TaskListProps) {
+export function TaskList({ tasks, onEditPress, onDeletePress, onToggleStatusPress }: TaskListProps) {
   const keyExtractor = (t: Task) => t.id;
 
   const ItemSeparator = () => <View style={styles.separator} />;
@@ -23,7 +24,12 @@ export function TaskList({ tasks, onEditPress, onDeletePress }: TaskListProps) {
     <FlatList
       data={tasks}
       renderItem={({ item }) => (
-        <TaskCard task={item} onEditPress={onEditPress} onDeletePress={onDeletePress} />
+        <TaskCard
+          task={item}
+          onEditPress={onEditPress}
+          onDeletePress={onDeletePress}
+          onToggleStatusPress={onToggleStatusPress}
+        />
       )}
       keyExtractor={keyExtractor}
       ItemSeparatorComponent={ItemSeparator}
