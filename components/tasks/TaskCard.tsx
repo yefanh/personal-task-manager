@@ -1,13 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
 import type { Task } from '@/src/types/task';
 
 interface TaskCardProps {
   task: Task;
+  onEditPress?: (task: Task) => void;
 }
 
-export function TaskCard({ task }: TaskCardProps) {
+export function TaskCard({ task, onEditPress }: TaskCardProps) {
   const isCompleted = task.status === 'completed';
   const statusStyle = isCompleted ? styles.statusCompleted : styles.statusPending;
 
@@ -22,6 +23,11 @@ export function TaskCard({ task }: TaskCardProps) {
       <Text style={styles.description} numberOfLines={1}>
         {task.description}
       </Text>
+      {onEditPress && (
+        <View style={styles.actions}>
+          <Button title="Edit" onPress={() => onEditPress(task)} color="#3b82f6" />
+        </View>
+      )}
     </View>
   );
 }
@@ -53,6 +59,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     color: '#4b5563',
+    marginBottom: 8,
   },
   statusBadge: {
     borderRadius: 999,
@@ -70,5 +77,11 @@ const styles = StyleSheet.create({
   },
   statusPending: {
     backgroundColor: '#fde68a',
+  },
+  actions: {
+    marginTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#e5e7eb',
+    paddingTop: 8,
   },
 });

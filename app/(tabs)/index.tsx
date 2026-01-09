@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { AddTaskForm } from '@/components/tasks/AddTaskForm';
+import { EditTaskForm } from '@/components/tasks/EditTaskForm';
 import { TaskList } from '@/components/tasks/TaskList';
 
 import { mockTasks } from '@/src/data/mockTasks';
 import type { Task } from '@/src/types/task';
 
 // TaskListScreen is a smart/container component that manages state and business logic.
-// It delegates rendering to presentational components (AddTaskForm and TaskList).
+// It delegates rendering to presentational components (AddTaskForm, TaskList, and EditTaskForm).
 export default function TaskListScreen() {
   // Explicitly type state as Task[] to enforce the shape strictly (no any).
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [newTitle, setNewTitle] = useState<string>('');
   const [newDescription, setNewDescription] = useState<string>('');
+  const [editingTask, setEditingTask] = useState<Task | null>(null);
 
   const handleSubmitNewTask = (values: { title: string; description: string }) => {
     // Keep validation minimal: a task must have a non-empty title.
@@ -36,6 +38,31 @@ export default function TaskListScreen() {
     setNewDescription('');
   };
 
+  // Handle opening the edit form when user taps Edit on a task card.
+  const handleEditPress = (task: Task) => {
+    setEditingTask(task);
+  };
+
+  // Handle saving changes to an edited task.
+  // Find the task by id and update its title and description while preserving id and status.
+  const handleSaveEdit = (updatedData: Omit<Task, 'id' | 'status'>) => {
+    if (!editingTask) return;
+
+    setTasks((prevTasks) =>
+      prevTasks.map((t) =>
+        t.id === editingTask.id
+          ? { ...t, title: updatedData.title, description: updatedData.description }
+          : t
+      )
+    );
+
+    setEditingTask(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+  };
+
   return (
     <View style={styles.container}>
       <AddTaskForm
@@ -46,7 +73,16 @@ export default function TaskListScreen() {
         onSubmit={handleSubmitNewTask}
       />
 
-      <TaskList tasks={tasks} />
+      <TaskList tasks={tasks} onEditPress={handleEditPress} />
+
+      {editingTask && (
+        <EditTaskForm
+          task={editingTask}
+          visible={!!editingTask}
+          onSave={handleSaveEdit}
+          onCancel={handleCancelEdit}
+        />
+      )}
     </View>
   );
 }
