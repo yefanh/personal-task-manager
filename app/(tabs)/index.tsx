@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { AddTaskForm } from '@/components/tasks/AddTaskForm';
 import { EditTaskForm } from '@/components/tasks/EditTaskForm';
 import { TaskList } from '@/components/tasks/TaskList';
+import { TaskSearchBar } from '@/components/tasks/TaskSearchBar';
 
 import { mockTasks } from '@/src/data/mockTasks';
 import type { Task } from '@/src/types/task';
@@ -17,9 +18,15 @@ export default function TaskListScreen() {
 
   // Explicitly type state as Task[] to enforce the shape strictly (no any).
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [newTitle, setNewTitle] = useState<string>('');
   const [newDescription, setNewDescription] = useState<string>('');
   const [editingTask, setEditingTask] = useState<Task | null>(null);
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleTasks = normalizedQuery.length
+    ? tasks.filter((t) => t.title.toLowerCase().includes(normalizedQuery))
+    : tasks;
 
   const handleSubmitNewTask = (values: { title: string; description: string }) => {
     // Keep validation minimal: a task must have a non-empty title.
@@ -115,8 +122,10 @@ export default function TaskListScreen() {
         onSubmit={handleSubmitNewTask}
       />
 
+      <TaskSearchBar value={searchQuery} onChangeValue={setSearchQuery} />
+
       <TaskList
-        tasks={tasks}
+        tasks={visibleTasks}
         onTaskPress={handleTaskPress}
         onEditPress={handleEditPress}
         onDeletePress={handleDeletePress}
