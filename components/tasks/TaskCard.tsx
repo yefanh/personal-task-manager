@@ -16,20 +16,23 @@ export function TaskCard({ task, onPress, onEditPress, onDeletePress, onToggleSt
   const statusStyle = isCompleted ? styles.statusCompleted : styles.statusPending;
 
   return (
-    <Pressable disabled={!onPress} onPress={() => onPress?.(task)} style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.title}>{task.title}</Text>
-        <Pressable
-          disabled={!onToggleStatusPress}
-          onPress={() => onToggleStatusPress?.(task)}
-          style={[styles.statusBadge, statusStyle]}
-        >
-          <Text style={styles.statusText}>{task.status}</Text>
-        </Pressable>
-      </View>
-      <Text style={styles.description} numberOfLines={1}>
-        {task.description}
-      </Text>
+    <View style={styles.card}>
+      <Pressable disabled={!onPress} onPress={() => onPress?.(task)}>
+        <View style={styles.cardHeader}>
+          <Text style={styles.title}>{task.title}</Text>
+          <Pressable
+            disabled={!onToggleStatusPress}
+            onPress={() => onToggleStatusPress?.(task)}
+            style={[styles.statusBadge, statusStyle]}
+          >
+            <Text style={styles.statusText}>{task.status}</Text>
+          </Pressable>
+        </View>
+        <Text style={styles.description} numberOfLines={1}>
+          {task.description}
+        </Text>
+      </Pressable>
+
       {(onEditPress || onDeletePress) && (
         <View style={styles.actions}>
           {onEditPress && <Button title="Edit" onPress={() => onEditPress(task)} color="#3b82f6" />}
@@ -38,7 +41,7 @@ export function TaskCard({ task, onPress, onEditPress, onDeletePress, onToggleSt
           )}
         </View>
       )}
-    </Pressable>
+    </View>
   );
 }
 
