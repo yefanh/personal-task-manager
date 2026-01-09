@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Alert, StyleSheet, View } from 'react-native';
 
 import { AddTaskForm } from '@/components/tasks/AddTaskForm';
 import { EditTaskForm } from '@/components/tasks/EditTaskForm';
@@ -63,6 +63,20 @@ export default function TaskListScreen() {
     setEditingTask(null);
   };
 
+  const handleDeletePress = (task: Task) => {
+    Alert.alert('Delete task?', 'This action cannot be undone.', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          setTasks((prevTasks) => prevTasks.filter((t) => t.id !== task.id));
+          if (editingTask?.id === task.id) setEditingTask(null);
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.container}>
       <AddTaskForm
@@ -73,7 +87,7 @@ export default function TaskListScreen() {
         onSubmit={handleSubmitNewTask}
       />
 
-      <TaskList tasks={tasks} onEditPress={handleEditPress} />
+      <TaskList tasks={tasks} onEditPress={handleEditPress} onDeletePress={handleDeletePress} />
 
       {editingTask && (
         <EditTaskForm

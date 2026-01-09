@@ -6,9 +6,10 @@ import type { Task } from '@/src/types/task';
 interface TaskCardProps {
   task: Task;
   onEditPress?: (task: Task) => void;
+  onDeletePress?: (task: Task) => void;
 }
 
-export function TaskCard({ task, onEditPress }: TaskCardProps) {
+export function TaskCard({ task, onEditPress, onDeletePress }: TaskCardProps) {
   const isCompleted = task.status === 'completed';
   const statusStyle = isCompleted ? styles.statusCompleted : styles.statusPending;
 
@@ -23,9 +24,12 @@ export function TaskCard({ task, onEditPress }: TaskCardProps) {
       <Text style={styles.description} numberOfLines={1}>
         {task.description}
       </Text>
-      {onEditPress && (
+      {(onEditPress || onDeletePress) && (
         <View style={styles.actions}>
-          <Button title="Edit" onPress={() => onEditPress(task)} color="#3b82f6" />
+          {onEditPress && <Button title="Edit" onPress={() => onEditPress(task)} color="#3b82f6" />}
+          {onDeletePress && (
+            <Button title="Delete" onPress={() => onDeletePress(task)} color="#ef4444" />
+          )}
         </View>
       )}
     </View>
@@ -79,6 +83,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fde68a',
   },
   actions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#e5e7eb',
