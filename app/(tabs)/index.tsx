@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, View } from 'react-native';
 
+import { useRouter } from 'expo-router';
+
 import { AddTaskForm } from '@/components/tasks/AddTaskForm';
 import { EditTaskForm } from '@/components/tasks/EditTaskForm';
 import { TaskList } from '@/components/tasks/TaskList';
@@ -11,6 +13,8 @@ import type { Task } from '@/src/types/task';
 // TaskListScreen is a smart/container component that manages state and business logic.
 // It delegates rendering to presentational components (AddTaskForm, TaskList, and EditTaskForm).
 export default function TaskListScreen() {
+  const router = useRouter();
+
   // Explicitly type state as Task[] to enforce the shape strictly (no any).
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [newTitle, setNewTitle] = useState<string>('');
@@ -89,6 +93,18 @@ export default function TaskListScreen() {
     }
   };
 
+  const handleTaskPress = (task: Task) => {
+    router.push({
+      pathname: '/task/[id]',
+      params: {
+        id: task.id,
+        title: task.title,
+        description: task.description,
+        status: task.status,
+      },
+    });
+  };
+
   return (
     <View style={styles.container}>
       <AddTaskForm
@@ -101,6 +117,7 @@ export default function TaskListScreen() {
 
       <TaskList
         tasks={tasks}
+        onTaskPress={handleTaskPress}
         onEditPress={handleEditPress}
         onDeletePress={handleDeletePress}
         onToggleStatusPress={handleToggleStatusPress}
