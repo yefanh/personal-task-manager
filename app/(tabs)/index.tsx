@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { AddTaskForm } from '@/components/tasks/AddTaskForm';
-import { TaskCard } from '@/components/tasks/TaskCard';
+import { TaskList } from '@/components/tasks/TaskList';
 
 import { mockTasks } from '@/src/data/mockTasks';
 import type { Task } from '@/src/types/task';
 
-// FlatList is preferred over ScrollView for large or dynamic lists because
-// it renders items lazily and recycles views, improving performance and memory.
-// keyExtractor tells FlatList how to uniquely identify each item for stable
-// re-rendering and efficient diffing when data changes.
+// TaskListScreen is a smart/container component that manages state and business logic.
+// It delegates rendering to presentational components (AddTaskForm and TaskList).
 export default function TaskListScreen() {
   // Explicitly type state as Task[] to enforce the shape strictly (no any).
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
@@ -38,10 +36,6 @@ export default function TaskListScreen() {
     setNewDescription('');
   };
 
-  const keyExtractor = (t: Task) => t.id;
-
-  const ItemSeparator = () => <View style={styles.separator} />;
-
   return (
     <View style={styles.container}>
       <AddTaskForm
@@ -52,13 +46,7 @@ export default function TaskListScreen() {
         onSubmit={handleSubmitNewTask}
       />
 
-      <FlatList
-        data={tasks}
-        renderItem={({ item }) => <TaskCard task={item} />}
-        keyExtractor={keyExtractor}
-        ItemSeparatorComponent={ItemSeparator}
-        contentContainerStyle={styles.listContent}
-      />
+      <TaskList tasks={tasks} />
     </View>
   );
 }
@@ -67,13 +55,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-  },
-  listContent: {
-    padding: 16,
-    paddingTop: 8,
-  },
-  separator: {
-    height: 12,
   },
 });
 
