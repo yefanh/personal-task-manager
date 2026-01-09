@@ -5,17 +5,18 @@ import type { Task } from '@/src/types/task';
 
 interface TaskCardProps {
   task: Task;
+  onPress?: (task: Task) => void;
   onEditPress?: (task: Task) => void;
   onDeletePress?: (task: Task) => void;
   onToggleStatusPress?: (task: Task) => void;
 }
 
-export function TaskCard({ task, onEditPress, onDeletePress, onToggleStatusPress }: TaskCardProps) {
+export function TaskCard({ task, onPress, onEditPress, onDeletePress, onToggleStatusPress }: TaskCardProps) {
   const isCompleted = task.status === 'completed';
   const statusStyle = isCompleted ? styles.statusCompleted : styles.statusPending;
 
   return (
-    <View style={styles.card}>
+    <Pressable disabled={!onPress} onPress={() => onPress?.(task)} style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.title}>{task.title}</Text>
         <Pressable
@@ -37,7 +38,7 @@ export function TaskCard({ task, onEditPress, onDeletePress, onToggleStatusPress
           )}
         </View>
       )}
-    </View>
+    </Pressable>
   );
 }
 
